@@ -20,7 +20,3 @@ func NewConsumer(brokers []string , topic string ) *Consumer {
 		reader: reader,
 	}
 }
-
-func (c* Consumer) ConsumeEvent(){
-
-}

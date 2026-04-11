@@ -26,8 +26,8 @@ func NewPaymentService(vpaService *VpaService, paymentReqProducer *kafka.Produce
 
 func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, payerVpa string, payeeVpa string, amount int64) {
 
-	payerAccountID := s.vpaService.ResolveVpa(payerVpa)
-	payeeAccountID := s.vpaService.ResolveVpa(payeeVpa)
+	payerAccountID := s.vpaService.ResolveVpa(ctx, payerVpa)
+	payeeAccountID := s.vpaService.ResolveVpa(ctx, payeeVpa)
 
 	message := &pb.PaymentRequest{
 		TransactionId:  transactionId,

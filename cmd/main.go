@@ -1,29 +1,26 @@
 package main
 
 import (
-	
+	"sync"
 
-	"github.com/swastiijain24/npci-shared/constants"
+	"github.com/gin-gonic/gin"
+	handler "github.com/swastiijain24/psp/internals/handlers"
 	"github.com/swastiijain24/psp/internals/kafka"
+	"github.com/swastiijain24/psp/internals/routes"
 	"github.com/swastiijain24/psp/internals/services"
 )
 
+var ResponseMap sync.Map
+
 func main() {
-	address := "localhost:9092"
-	brokers := []string{address}
-
-	producer := kafka.NewProducer(address, constants.TopicPaymentRequest)
-	defer producer.Close()
-
-	consumer := kafka.NewConsumer(brokers, constants.TopicPaymentResponse)
-	defer consumer.Close()
-
-	service := services.NewService(producer, consumer)
-
-	go service.ConsumeMsg()
-	go service.ProduceMsg()
-
 	
-	select {}
+	r:= gin.New()
 
+	vpaService := services.NewVpaService()
+
+	paymentReqProducer := kafka.NewProducer("localhost:9092", "payment.request.v1")
+	paymentService := services.NewPaymentService(vpaService, paymentReqProducer)
+	paymentHandler := handler.NewHandler(paymentService)
+
+	routes.RegisterRoutes(r, paymentHandler)
 }
