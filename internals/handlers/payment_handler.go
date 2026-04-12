@@ -25,10 +25,10 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 
 	h.paymentService.ProcessPayment(c.Request.Context(), params.TransactionID, params.PayerVPA, params.PayeeVPA, params.Amount)
 
+}
 
-
-	// will store the txnid - request in the map so that we are able to give the correct response back 
-
+func (h *PaymentHandler) GetTxnStatus(c *gin.Context){
+	//psp will poll on this to get  the status of the txn
 }
 
 type paymentParams struct {

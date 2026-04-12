@@ -10,5 +10,6 @@ func RegisterRoutes(r *gin.Engine, paymentHandler *handler.PaymentHandler) {
 	npciRoutes := r.Group("/npci")
 	{
 		npciRoutes.POST("/payment", paymentHandler.ProcessPayment)
+		npciRoutes.GET("status/:transactionId", paymentHandler.GetTxnStatus)
 	}
 }

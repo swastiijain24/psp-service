@@ -2,8 +2,10 @@ package services
 
 import (
 	"context"
+
 	"github.com/swastiijain24/psp/internals/gen"
 	"github.com/swastiijain24/psp/internals/kafka"
+	"github.com/swastiijain24/psp/internals/repository"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -14,12 +16,14 @@ type PaymentService interface {
 type PaymentSvc struct {
 	vpaService         *VpaService
 	paymentReqProducer *kafka.Producer
+	redis	repository.RedisStore
 }
 
-func NewPaymentService(vpaService *VpaService, paymentReqProducer *kafka.Producer) PaymentService {
+func NewPaymentService(vpaService *VpaService, paymentReqProducer *kafka.Producer, redis repository.RedisStore) PaymentService {
 	return &PaymentSvc{
 		vpaService:         vpaService,
 		paymentReqProducer: paymentReqProducer,
+		redis: redis,
 	}
 
 }
@@ -41,6 +45,8 @@ func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, p
 		return //err
 	}
 
+	s.redis.SetInitialStatus(ctx, transactionId)
 	s.paymentReqProducer.ProduceEvent(ctx, transactionId, data)
 
 }
+
