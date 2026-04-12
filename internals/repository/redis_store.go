@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -33,4 +34,12 @@ func (s *RedisStore) GetStatus(ctx context.Context, txnId string) (string, error
 		return "NOT_FOUND", nil 
 	}
 	return val, err 
+}
+
+func (s *RedisStore) DeleteStatus(ctx context.Context, txnId string) error {
+	err := s.client.Del(ctx, "txn:"+txnId).Err()
+	if err != nil {
+		return fmt.Errorf("failed to delete status for txn %s: %w", txnId, err)
+	}
+	return nil
 }

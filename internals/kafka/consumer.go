@@ -14,6 +14,7 @@ func NewConsumer(brokers []string , topic string ) *Consumer {
 		Brokers: brokers,
 		Topic:   topic,
 		GroupID: "group-1",
+		CommitInterval : 0, //disabling auto commit 
 	})
 
 	return &Consumer{

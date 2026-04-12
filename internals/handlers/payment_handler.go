@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/swastiijain24/psp/internals/services"
 )
@@ -23,12 +25,18 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 		return
 	}
 
-	h.paymentService.ProcessPayment(c.Request.Context(), params.TransactionID, params.PayerVPA, params.PayeeVPA, params.Amount)
+	err = h.paymentService.ProcessPayment(c.Request.Context(), params.TransactionID, params.PayerVPA, params.PayeeVPA, params.Amount)
+	if err != nil {
+		log.Println(err)
+	}
 
 }
 
 func (h *PaymentHandler) GetTxnStatus(c *gin.Context){
 	//psp will poll on this to get  the status of the txn
+
+	transactionId := c.Param("transactionId")
+	h.paymentService.GetTransactionStatus(c.Request.Context(), transactionId)
 }
 
 type paymentParams struct {
