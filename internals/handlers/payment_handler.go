@@ -1,4 +1,4 @@
-package handler
+package handlers
 
 import (
 	"log"
@@ -11,7 +11,7 @@ type PaymentHandler struct {
 	paymentService services.PaymentService
 }
 
-func NewHandler(paymentService services.PaymentService) *PaymentHandler {
+func NewPaymentHandler(paymentService services.PaymentService) *PaymentHandler {
 	return &PaymentHandler{
 		paymentService: paymentService,
 	}
@@ -24,11 +24,14 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 		c.JSON(404, gin.H{"error": err.Error()})
 		return
 	}
+	log.Print("1")
 
 	err = h.paymentService.ProcessPayment(c.Request.Context(), params.TransactionID, params.PayerVPA, params.PayeeVPA, params.Amount)
 	if err != nil {
 		log.Println(err)
 	}
+
+	log.Print("4")
 
 }
 

@@ -55,7 +55,7 @@ func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, p
 	if err != nil {
 		return fmt.Errorf("Failed to set initial status in Redis for %s: %v", transactionId, err)
 	}
-
+	log.Print("2")
 	err = s.paymentReqProducer.ProduceEvent(ctx, transactionId, data)
 	if err != nil {
 		log.Printf("Error producing payment event for %s: %v", transactionId, err)
@@ -63,18 +63,18 @@ func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, p
 		return fmt.Errorf("Deleted entry in Redis for %s: %v", transactionId, err)
 
 	}
-
+	log.Print("3")
 	return nil
 
 }
 
 func (s *PaymentSvc) PayentResponse(ctx context.Context, transactionId string, status string, debit_ref_id string, credit_ref_id string, failureReason string, completedAt string) error {
-
+	log.Print("15")
 	err := s.redis.UpdateFinalStatus(ctx, transactionId, status)
 	if err != nil {
 		return fmt.Errorf("Failed to update final status in Redis for %s: %v", transactionId, err)
 	}
-
+	log.Print("transaction donee..")
 	return nil
 
 }

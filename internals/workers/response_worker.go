@@ -25,7 +25,7 @@ func NewResponseWorker(consumer *kafka.Consumer, paymentService services.Payment
 func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 
 	for {
-
+		log.Print("14")
 		msg, err := w.consumer.Reader.FetchMessage(ctx)
 		if err != nil {
 			log.Printf("error fetching message: %v", err)
@@ -45,7 +45,7 @@ func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 		if err := w.consumer.Reader.CommitMessages(ctx, msg); err != nil {
 			log.Printf("failed to commit: %v", err)
 		}
-
+		log.Print("16")
 	}
 
 }
