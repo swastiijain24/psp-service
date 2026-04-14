@@ -12,8 +12,8 @@ import (
 )
 
 type PaymentService interface {
-	ProcessPayment(ctx context.Context, transactionID string, payerVpa string, payeeVpa string, amount int64) error
-	PayentResponse(ctx context.Context, transactionId string, status string, debit_ref_id string, credit_ref_id string, failureReason string, completedAt string) error
+	ProcessPayment(ctx context.Context, transactionID string, payerVpa string, payeeVpa string, amount int64, mpin string) error
+	PayentResponse(ctx context.Context, paymentResponse *pb.PaymentResponse) error
 	GetTransactionStatus(ctx context.Context, transactionId string) (string, error)
 }
 
@@ -32,7 +32,7 @@ func NewPaymentService(vpaService *VpaService, paymentReqProducer *kafka.Produce
 
 }
 
-func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, payerVpa string, payeeVpa string, amount int64) error {
+func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, payerVpa string, payeeVpa string, amount int64, mpin string) error {
 
 	payerAccountID, payerBankCode := s.vpaService.ResolveVpa(ctx, payerVpa)
 	payeeAccountID, payeeBankCode := s.vpaService.ResolveVpa(ctx, payeeVpa)
@@ -44,6 +44,7 @@ func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, p
 		Amount:         amount,
 		PayerBankCode:  payerBankCode,
 		PayeeBankCode:  payeeBankCode,
+		Mpin: mpin,
 	}
 
 	data, err := proto.Marshal(message)
@@ -55,26 +56,28 @@ func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, p
 	if err != nil {
 		return fmt.Errorf("Failed to set initial status in Redis for %s: %v", transactionId, err)
 	}
-	log.Print("2")
-	err = s.paymentReqProducer.ProduceEvent(ctx, transactionId, data)
+
+	log.Print("request set in redis")
+
+	err = s.paymentReqProducer.ProduceEvent(ctx, transactionId, data, "payment.request.v1")
 	if err != nil {
 		log.Printf("Error producing payment event for %s: %v", transactionId, err)
 		_ = s.redis.DeleteStatus(ctx, transactionId)
 		return fmt.Errorf("Deleted entry in Redis for %s: %v", transactionId, err)
 
 	}
-	log.Print("3")
+	log.Print("payment request produced from psp service")
 	return nil
 
 }
 
-func (s *PaymentSvc) PayentResponse(ctx context.Context, transactionId string, status string, debit_ref_id string, credit_ref_id string, failureReason string, completedAt string) error {
-	log.Print("15")
-	err := s.redis.UpdateFinalStatus(ctx, transactionId, status)
+func (s *PaymentSvc) PayentResponse(ctx context.Context, paymentResponse *pb.PaymentResponse) error {
+	
+	err := s.redis.UpdateFinalStatus(ctx, paymentResponse.GetTransactionId(), paymentResponse.GetStatus())
 	if err != nil {
-		return fmt.Errorf("Failed to update final status in Redis for %s: %v", transactionId, err)
+		return fmt.Errorf("Failed to update final status in Redis for %s: %v", paymentResponse.GetTransactionId(), err)
 	}
-	log.Print("transaction donee..")
+	log.Print("transaction donee")
 	return nil
 
 }

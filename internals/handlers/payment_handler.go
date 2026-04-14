@@ -24,18 +24,18 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 		c.JSON(404, gin.H{"error": err.Error()})
 		return
 	}
-	log.Print("1")
 
-	err = h.paymentService.ProcessPayment(c.Request.Context(), params.TransactionID, params.PayerVPA, params.PayeeVPA, params.Amount)
+	log.Print("received http payment request")
+
+	err = h.paymentService.ProcessPayment(c.Request.Context(), params.TransactionID, params.PayerVPA, params.PayeeVPA, params.Amount, params.Mpin)
 	if err != nil {
 		log.Println(err)
 	}
 
-	log.Print("4")
-
+	log.Print("handler function's job done")
 }
 
-func (h *PaymentHandler) GetTxnStatus(c *gin.Context){
+func (h *PaymentHandler) GetTxnStatus(c *gin.Context) {
 	//psp will poll on this to get  the status of the txn
 
 	transactionId := c.Param("transactionId")
@@ -47,4 +47,5 @@ type paymentParams struct {
 	PayerVPA      string `json:"payer_vpa" binding:"required"`
 	PayeeVPA      string `json:"payee_vpa" binding:"required"`
 	Amount        int64  `json:"amount" binding:"required"`
+	Mpin          string `json:"mpin" binding:"required"`
 }

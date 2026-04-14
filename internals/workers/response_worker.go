@@ -25,12 +25,17 @@ func NewResponseWorker(consumer *kafka.Consumer, paymentService services.Payment
 func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 
 	for {
-		log.Print("14")
 		msg, err := w.consumer.Reader.FetchMessage(ctx)
 		if err != nil {
+			if ctx.Err() != nil{
+				log.Print("stopping consumer loop")
+				return 
+			}
 			log.Printf("error fetching message: %v", err)
 			continue
 		}
+
+		log.Print("processing final response message from Kafka")
 
 		var paymentResponse pb.PaymentResponse
 
@@ -39,13 +44,12 @@ func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 			log.Printf("error unpacking message: %v", err)
 			continue
 		}
-
-		w.paymentService.PayentResponse(ctx, paymentResponse.GetTransactionId(), paymentResponse.GetStatus(), paymentResponse.GetDebitBankRef(), paymentResponse.GetCreditBankRef(), paymentResponse.GetFailureReason(), paymentResponse.GetCompletedAt())
+		w.paymentService.PayentResponse(ctx, &paymentResponse)
 
 		if err := w.consumer.Reader.CommitMessages(ctx, msg); err != nil {
 			log.Printf("failed to commit: %v", err)
 		}
-		log.Print("16")
+		log.Print("processed final response")
 	}
 
 }
