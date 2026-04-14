@@ -10,10 +10,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/swastiijain24/psp/internals/handlers"
+	"github.com/swastiijain24/psp/internals/repositories"
 	"github.com/swastiijain24/psp/internals/kafka"
-	"github.com/swastiijain24/psp/internals/repository"
+	"github.com/swastiijain24/psp/internals/redis"
 	"github.com/swastiijain24/psp/internals/routes"
 	"github.com/swastiijain24/psp/internals/services"
 	"github.com/swastiijain24/psp/internals/workers"
@@ -27,13 +29,23 @@ func main() {
 		log.Print("no .env file found")
 	}
 
+	dsn := os.Getenv("GOOSE_DB_STRING")
+
+	pool, err := pgxpool.New(ctx, dsn)
+	if err != nil {
+		panic(err)
+	}
+	defer pool.Close()
+
 	redisAddr := os.Getenv("REDIS_ADDR")
 	kafkaAddr := os.Getenv("KAFKA_ADDR")
 	port := os.Getenv("PORT")
 
 	redisStore := repository.NewRedisStore(redisAddr)
 	kafkaProducer := kafka.NewProducer(kafkaAddr)
-	vpaSvc := services.NewVpaService()
+
+	repo := repo.New(pool)
+	vpaSvc := services.NewVpaService(repo)
 
 	paymentSvc := services.NewPaymentService(vpaSvc, kafkaProducer, redisStore)
 	paymentHandler := handlers.NewPaymentHandler(paymentSvc)

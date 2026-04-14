@@ -7,7 +7,7 @@ import (
 
 	"github.com/swastiijain24/psp/internals/kafka"
 	"github.com/swastiijain24/psp/internals/pb"
-	"github.com/swastiijain24/psp/internals/repository"
+	"github.com/swastiijain24/psp/internals/redis"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -34,8 +34,14 @@ func NewPaymentService(vpaService *VpaService, paymentReqProducer *kafka.Produce
 
 func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, payerVpa string, payeeVpa string, amount int64, mpin string) error {
 
-	payerAccountID, payerBankCode := s.vpaService.ResolveVpa(ctx, payerVpa)
-	payeeAccountID, payeeBankCode := s.vpaService.ResolveVpa(ctx, payeeVpa)
+	payerAccountID, payerBankCode, err := s.vpaService.ResolveVpa(ctx, payerVpa)
+	if err != nil {
+		return fmt.Errorf("invalid VPA ID :%w", err)
+	}
+	payeeAccountID, payeeBankCode, err := s.vpaService.ResolveVpa(ctx, payeeVpa)
+	if err != nil {
+		return fmt.Errorf("invalid VPA ID :%w", err)
+	}
 
 	message := &pb.PaymentRequest{
 		TransactionId:  transactionId,
