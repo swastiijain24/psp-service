@@ -3,7 +3,6 @@ package workers
 import (
 	"context"
 	"log"
-
 	"github.com/swastiijain24/psp/internals/kafka"
 	pb "github.com/swastiijain24/psp/internals/pb"
 	"github.com/swastiijain24/psp/internals/services"
@@ -48,6 +47,7 @@ func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 
 		if err := w.consumer.Reader.CommitMessages(ctx, msg); err != nil {
 			log.Printf("failed to commit: %v", err)
+			continue 
 		}
 		log.Print("processed final response")
 	}
