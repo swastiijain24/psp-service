@@ -43,7 +43,10 @@ func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 			log.Printf("error unpacking message: %v", err)
 			continue
 		}
-		w.paymentService.PayentResponse(ctx, &paymentResponse)
+		if err = w.paymentService.PayentResponse(ctx, &paymentResponse); err != nil {
+			log.Println(err.Error())
+			continue 
+		}
 
 		if err := w.consumer.Reader.CommitMessages(ctx, msg); err != nil {
 			log.Printf("failed to commit: %v", err)

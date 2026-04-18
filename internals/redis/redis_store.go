@@ -25,7 +25,7 @@ func (s *RedisStore) SetInitialStatus(ctx context.Context, txnId string) error {
 }
 
 func (s *RedisStore) UpdateFinalStatus(ctx context.Context, txnId string, status string) error {
-	return s.client.Set(ctx, "txn:"+txnId, status, 10*time.Minute).Err()
+	return s.client.Set(ctx, "txn:"+txnId, status, 24*time.Hour).Err()
 }
 
 func (s *RedisStore) GetStatus(ctx context.Context, txnId string) (string, error){
