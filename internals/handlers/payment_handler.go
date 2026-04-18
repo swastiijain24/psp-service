@@ -25,7 +25,7 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 		return
 	}
 
-	log.Print("received http payment request")
+	log.Print("received http payment request 1")
 
 	err = h.paymentService.ProcessPayment(c.Request.Context(), params.TransactionID, params.PayerVPA, params.PayeeVPA, params.Amount, params.Mpin)
 	if err != nil {
@@ -34,7 +34,7 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 		return
 	}
 
-	log.Print("handler function's job done")
+	log.Print("handler function's job done 4")
 }
 
 func (h *PaymentHandler) GetTxnStatus(c *gin.Context) {

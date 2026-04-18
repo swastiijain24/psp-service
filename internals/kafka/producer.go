@@ -29,5 +29,6 @@ func (p *Producer) ProduceEvent(ctx context.Context, key string, value []byte, t
 	return p.writer.WriteMessages(ctx, kafka.Message{
 		Key:   []byte(key),
 		Value: value,
+		Topic: topic,
 	})
 }

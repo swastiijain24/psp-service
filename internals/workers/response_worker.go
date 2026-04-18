@@ -33,7 +33,7 @@ func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 			log.Printf("error fetching message: %v", err)
 			continue
 		}
-
+		log.Print("credit done")
 		log.Print("processing final response message from Kafka")
 
 		var paymentResponse pb.PaymentResponse

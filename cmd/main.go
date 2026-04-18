@@ -29,7 +29,8 @@ func main() {
 		log.Print("no .env file found")
 	}
 
-	dsn := os.Getenv("GOOSE_DB_STRING")
+	dsn := os.Getenv("GOOSE_DBSTRING")
+	log.Print(dsn)
 
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {

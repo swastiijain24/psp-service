@@ -63,7 +63,7 @@ func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, p
 		return fmt.Errorf("Failed to set initial status in Redis for %s: %v", transactionId, err)
 	}
 
-	log.Print("request set in redis")
+	log.Print("request set in redis 2")
 
 	err = s.paymentReqProducer.ProduceEvent(ctx, transactionId, data, "payment.request.v1")
 	if err != nil {
@@ -72,7 +72,7 @@ func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, p
 		return fmt.Errorf("Deleted entry in Redis for %s: %v", transactionId, err)
 
 	}
-	log.Print("payment request produced from psp service")
+	log.Print("payment request produced from psp service 3")
 	return nil
 
 }
