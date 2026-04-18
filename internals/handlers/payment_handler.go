@@ -30,6 +30,7 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 	err = h.paymentService.ProcessPayment(c.Request.Context(), params.TransactionID, params.PayerVPA, params.PayeeVPA, params.Amount, params.Mpin)
 	if err != nil {
 		log.Println(err)
+		return 
 	}
 
 	log.Print("handler function's job done")

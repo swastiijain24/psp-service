@@ -29,7 +29,7 @@ func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 			if ctx.Err() != nil{
 				log.Print("stopping consumer loop")
 				return 
-			}
+			} 
 			log.Printf("error fetching message: %v", err)
 			continue
 		}
