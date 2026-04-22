@@ -58,7 +58,7 @@ func main() {
 
 	go worker.StartConsumingResponse(ctx)
 	r := gin.Default()
-	routes.RegisterRoutes(r, paymentHandler)
+	routes.RegisterNpciRoutes(r, paymentHandler)
 	log.Print("initialized all")
 
 

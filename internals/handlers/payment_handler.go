@@ -38,7 +38,7 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 }
 
 func (h *PaymentHandler) GetTxnStatus(c *gin.Context) {
-	//psp will poll on this to get  the status of the txn
+	//psp will poll on this to get the status of the txn
 	transactionId := c.Param("transactionId")
 	status, err := h.paymentService.GetTransactionStatus(c.Request.Context(), transactionId)
 	if err != nil {

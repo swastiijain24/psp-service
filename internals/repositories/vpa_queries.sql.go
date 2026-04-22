@@ -11,6 +11,22 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const checkVpaExists = `-- name: CheckVpaExists :one
+SELECT EXISTS (
+    SELECT 1 
+    FROM vpa_map 
+    WHERE vpa_id = $1 
+      AND is_active = true
+)
+`
+
+func (q *Queries) CheckVpaExists(ctx context.Context, vpaID string) (bool, error) {
+	row := q.db.QueryRow(ctx, checkVpaExists, vpaID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createVpaMapping = `-- name: CreateVpaMapping :one
 INSERT INTO vpa_map (
     vpa_id, account_id, bank_code

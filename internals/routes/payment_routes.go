@@ -5,7 +5,7 @@ import (
 	handler "github.com/swastiijain24/psp/internals/handlers"
 )
 
-func RegisterRoutes(r *gin.Engine, paymentHandler *handler.PaymentHandler) {
+func RegisterNpciRoutes(r *gin.Engine, paymentHandler *handler.PaymentHandler) {
 
 	npciRoutes := r.Group("/npci")
 	{

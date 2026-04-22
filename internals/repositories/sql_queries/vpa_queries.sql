@@ -16,3 +16,11 @@ RETURNING *;
 UPDATE vpa_map
 SET is_active = false, updated_at = CURRENT_TIMESTAMP
 WHERE vpa_id = $1;
+
+-- name: CheckVpaExists :one
+SELECT EXISTS (
+    SELECT 1 
+    FROM vpa_map 
+    WHERE vpa_id = $1 
+      AND is_active = true
+);

@@ -9,6 +9,7 @@ import (
 )
 
 type Querier interface {
+	CheckVpaExists(ctx context.Context, vpaID string) (bool, error)
 	CreateVpaMapping(ctx context.Context, arg CreateVpaMappingParams) (VpaMap, error)
 	DeactivateVpa(ctx context.Context, vpaID string) error
 	GetVpaMapping(ctx context.Context, vpaID string) (GetVpaMappingRow, error)

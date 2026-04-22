@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 
 	repo "github.com/swastiijain24/psp/internals/repositories"
 )
@@ -24,4 +25,25 @@ func (s *VpaService) ResolveVpa(ctx context.Context, VPA string) (string, string
 	}
 
 	return mapping.AccountID, mapping.BankCode, nil 
+}
+
+func (s *VpaService) RegisterVpa(ctx context.Context, vpaId string, accountId string, bankCode string) error  {
+	exists, err := s.repo.CheckVpaExists(ctx, vpaId)
+	if err != nil {
+		return err 
+	}
+	if exists == true {
+		return fmt.Errorf("VPAId already registered")
+	}
+
+	_, err =s.repo.CreateVpaMapping(ctx, repo.CreateVpaMappingParams{
+		VpaID: vpaId,
+		AccountID: accountId,
+		BankCode: bankCode,
+	}) 
+	if err != nil {
+		return err 
+	}
+
+	return nil 
 }
