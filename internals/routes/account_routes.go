@@ -2,10 +2,10 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	handler "github.com/swastiijain24/psp/internals/handlers"
+	"github.com/swastiijain24/psp/internals/handlers"
 )
 
-func RegisterAccountRoutes(r *gin.Engine, accountHandler *handler.AccountHandler) {
+func RegisterAccountRoutes(r *gin.Engine, accountHandler *handlers.AccountHandler) {
 
 	accountRoutes := r.Group("/account")
 	{

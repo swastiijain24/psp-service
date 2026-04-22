@@ -13,7 +13,7 @@ import (
 
 type PaymentService interface {
 	ProcessPayment(ctx context.Context, transactionID string, payerVpa string, payeeVpa string, amount int64, mpin string) error
-	PayentResponse(ctx context.Context, paymentResponse *pb.PaymentResponse) error
+	PaymentResponse(ctx context.Context, paymentResponse *pb.PaymentResponse) error
 	GetTransactionStatus(ctx context.Context, transactionId string) (string, error)
 }
 
@@ -77,7 +77,7 @@ func (s *PaymentSvc) ProcessPayment(ctx context.Context, transactionId string, p
 
 }
 
-func (s *PaymentSvc) PayentResponse(ctx context.Context, paymentResponse *pb.PaymentResponse) error {
+func (s *PaymentSvc) PaymentResponse(ctx context.Context, paymentResponse *pb.PaymentResponse) error {
 	
 	err := s.redis.UpdateFinalStatus(ctx, paymentResponse.GetTransactionId(), paymentResponse.GetStatus())
 	if err != nil {

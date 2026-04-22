@@ -13,9 +13,10 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/swastiijain24/psp/internals/handlers"
-	"github.com/swastiijain24/psp/internals/repositories"
+	"github.com/swastiijain24/psp/internals/httpclient"
 	"github.com/swastiijain24/psp/internals/kafka"
 	"github.com/swastiijain24/psp/internals/redis"
+	"github.com/swastiijain24/psp/internals/repositories"
 	"github.com/swastiijain24/psp/internals/routes"
 	"github.com/swastiijain24/psp/internals/services"
 	"github.com/swastiijain24/psp/internals/workers"
@@ -51,6 +52,7 @@ func main() {
 	paymentSvc := services.NewPaymentService(vpaSvc, kafkaProducer, redisStore)
 	paymentHandler := handlers.NewPaymentHandler(paymentSvc)
 
+
 	consumer := kafka.NewConsumer([]string{kafkaAddr}, "payment.response.v1", "psp-grp")
 	defer consumer.Reader.Close()
 
@@ -59,6 +61,12 @@ func main() {
 	go worker.StartConsumingResponse(ctx)
 	r := gin.Default()
 	routes.RegisterNpciRoutes(r, paymentHandler)
+	bankServiceClient := httpclient.NewBankServiceClient(os.Getenv("BASE_URL"))
+	accountService := services.NewAccountService(bankServiceClient, vpaSvc)
+	accountHandler := handlers.NewaccountHandler(accountService)
+	vpaHandler := handlers.NewVpaHandler(vpaSvc)
+	routes.RegisterAccountRoutes(r, accountHandler)
+	routes.RegisterVpaRoutes(r,vpaHandler )
 	log.Print("initialized all")
 
 

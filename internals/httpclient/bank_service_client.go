@@ -46,7 +46,7 @@ func (c *BankServiceClient) DiscoverAccounts(ctx context.Context, phone string, 
 		"bank_code": bankCode,
 	})
 
-	url := fmt.Sprintf("%s/accounts/discover", c.BaseURL)
+	url := fmt.Sprintf("%s/account/discover", c.BaseURL)
 	req, _ := http.NewRequestWithContext(ctx, "GET", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -72,7 +72,7 @@ func (c *BankServiceClient) SetMpin(ctx context.Context, accountId string, bankC
 		"mpin_encrypted":mpinEn,
 	})
 
-	url := fmt.Sprintf("%s/accounts/mpin", c.BaseURL)
+	url := fmt.Sprintf("%s/account/mpin", c.BaseURL)
 	req, _ := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -91,7 +91,7 @@ func (c *BankServiceClient) ChangeMpin(ctx context.Context, accountId string, ba
 		"new_mpin_encrypted":newMpinEn,
 	})
 
-	url := fmt.Sprintf("%s/accounts/mpin", c.BaseURL)
+	url := fmt.Sprintf("%s/account/mpin", c.BaseURL)
 	req, _ := http.NewRequestWithContext(ctx, "PUT", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -109,7 +109,7 @@ func (c *BankServiceClient) GetBalance(ctx context.Context, accountId string, ba
 		"mpin_encrypted":mpinEn,
 	})
 
-	url := fmt.Sprintf("%s/accounts/balance", c.BaseURL)
+	url := fmt.Sprintf("%s/account/balance", c.BaseURL)
 	req, _ := http.NewRequestWithContext(ctx, "GET", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 

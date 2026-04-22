@@ -43,7 +43,7 @@ func (w *ResponseWorker) StartConsumingResponse(ctx context.Context) {
 			log.Printf("error unpacking message: %v", err)
 			continue
 		}
-		if err = w.paymentService.PayentResponse(ctx, &paymentResponse); err != nil {
+		if err = w.paymentService.PaymentResponse(ctx, &paymentResponse); err != nil {
 			log.Println(err.Error())
 			continue 
 		}
