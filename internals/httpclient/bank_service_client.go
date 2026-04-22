@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -49,6 +50,7 @@ func (c *BankServiceClient) DiscoverAccounts(ctx context.Context, phone string, 
 	url := fmt.Sprintf("%s/account/discover", c.BaseURL)
 	req, _ := http.NewRequestWithContext(ctx, "GET", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-API-Key", os.Getenv("INTERNAL_API_KEY"))
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
@@ -75,6 +77,7 @@ func (c *BankServiceClient) SetMpin(ctx context.Context, accountId string, bankC
 	url := fmt.Sprintf("%s/account/mpin", c.BaseURL)
 	req, _ := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-API-Key", os.Getenv("INTERNAL_API_KEY"))
 
 	_, err := c.HTTPClient.Do(req)
 	if err != nil {
@@ -94,6 +97,7 @@ func (c *BankServiceClient) ChangeMpin(ctx context.Context, accountId string, ba
 	url := fmt.Sprintf("%s/account/mpin", c.BaseURL)
 	req, _ := http.NewRequestWithContext(ctx, "PUT", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-API-Key", os.Getenv("INTERNAL_API_KEY"))
 
 	_, err := c.HTTPClient.Do(req)
 	if err != nil {
@@ -112,6 +116,7 @@ func (c *BankServiceClient) GetBalance(ctx context.Context, accountId string, ba
 	url := fmt.Sprintf("%s/account/balance", c.BaseURL)
 	req, _ := http.NewRequestWithContext(ctx, "GET", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-API-Key", os.Getenv("INTERNAL_API_KEY"))
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
