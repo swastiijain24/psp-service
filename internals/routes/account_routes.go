@@ -9,6 +9,9 @@ func RegisterAccountRoutes(r *gin.Engine, accountHandler *handler.AccountHandler
 
 	accountRoutes := r.Group("/account")
 	{
-		accountRoutes.POST("/discover")
+		accountRoutes.GET("/discover", accountHandler.DiscoverAccounts)
+		accountRoutes.POST("/mpin", accountHandler.SetMpin)
+		accountRoutes.PUT("/mpin", accountHandler.ChangeMpin)
+		accountRoutes.GET("/balance", accountHandler.GetBalance)
 	}
 }

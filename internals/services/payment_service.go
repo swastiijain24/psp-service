@@ -18,12 +18,12 @@ type PaymentService interface {
 }
 
 type PaymentSvc struct {
-	vpaService         *VpaService
+	vpaService         VpaService
 	paymentReqProducer *kafka.Producer
 	redis              *repository.RedisStore
 }
 
-func NewPaymentService(vpaService *VpaService, paymentReqProducer *kafka.Producer, redis *repository.RedisStore) PaymentService {
+func NewPaymentService(vpaService VpaService, paymentReqProducer *kafka.Producer, redis *repository.RedisStore) PaymentService {
 	return &PaymentSvc{
 		vpaService:         vpaService,
 		paymentReqProducer: paymentReqProducer,
