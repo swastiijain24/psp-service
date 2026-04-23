@@ -14,44 +14,6 @@ It is responsible for:
 
 This service models the **entry point into the NPCI switch**, similar to real-world UPI infrastructure.
 
----
-
-## 🏗️ Architecture
-
-This system follows a **microservices + event-driven architecture**.
-
-```id="c2v9mf"
-PSP Client (Mobile App / Backend)
-        ↓
-PSP Service (Gateway)
-        ↓
-Kafka (payment_request topic)
-        ↓
-Core Service (NPCI Processing Engine)
-        ↓
-Kafka (bank_request topic)
-        ↓
-Bank Service (NPCI Bank Adapter)
-        ↓
-Core Bank (Bank Management System)
-        ↓
-Bank Service(response from bank)
-        ↓
-Kafka (bank_response topic)
-        ↓
-Core Service
-        ↓
-Kafka (payment_response topic)
-        ↓
-PSP Service (Consumes Response)
-        ↓
-Redis (Response Store)
-        ↓
-PSP Client polls for status
-```
-
----
-
 ##  🔑  Responsibilities
 
 ### 1. API Gateway for PSPs
