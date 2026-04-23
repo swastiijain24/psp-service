@@ -8,6 +8,14 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type PspRegistration struct {
+	PspID        string             `json:"psp_id"`
+	HashedApiKey string             `json:"hashed_api_key"`
+	PspName      string             `json:"psp_name"`
+	IsActive     bool               `json:"is_active"`
+	CreatedAt    pgtype.Timestamptz `json:"created_at"`
+}
+
 type VpaMap struct {
 	ID        pgtype.UUID        `json:"id"`
 	VpaID     string             `json:"vpa_id"`

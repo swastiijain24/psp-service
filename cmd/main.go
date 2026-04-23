@@ -15,6 +15,7 @@ import (
 	"github.com/swastiijain24/psp/internals/handlers"
 	"github.com/swastiijain24/psp/internals/httpclient"
 	"github.com/swastiijain24/psp/internals/kafka"
+	apiAuth "github.com/swastiijain24/psp/internals/middlewares/api_key_auth"
 	"github.com/swastiijain24/psp/internals/redis"
 	"github.com/swastiijain24/psp/internals/repositories"
 	"github.com/swastiijain24/psp/internals/routes"
@@ -60,13 +61,17 @@ func main() {
 
 	go worker.StartConsumingResponse(ctx)
 	r := gin.Default()
-	routes.RegisterNpciRoutes(r, paymentHandler)
+	apiKeyService := services.NewApiKeyService(repo)
+	apikeygenerator := apiAuth.NewAPIKeyGenerator()
+	apikeyhasher := apiAuth.NewAPIKeyHasher()
+	apiKeyAuth := apiAuth.NewApiAuthMiddleware(apikeygenerator, apikeyhasher, apiKeyService)
+	routes.RegisterNpciRoutes(r, apiKeyAuth, paymentHandler)
 	bankServiceClient := httpclient.NewBankServiceClient(os.Getenv("BASE_URL"))
 	accountService := services.NewAccountService(bankServiceClient, vpaSvc)
 	accountHandler := handlers.NewaccountHandler(accountService)
 	vpaHandler := handlers.NewVpaHandler(vpaSvc)
-	routes.RegisterAccountRoutes(r, accountHandler)
-	routes.RegisterVpaRoutes(r,vpaHandler )
+	routes.RegisterAccountRoutes(r,apiKeyAuth, accountHandler)
+	routes.RegisterVpaRoutes(r, apiKeyAuth, vpaHandler )
 	log.Print("initialized all")
 
 
