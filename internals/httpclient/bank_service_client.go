@@ -13,8 +13,8 @@ import (
 
 type HttpClient interface {
 	DiscoverAccounts(ctx context.Context, phone string, bankCode string) ([]string, error)
-	SetMpin(ctx context.Context, accountId string, bankCode string, mpinEn string ) error 
-	ChangeMpin(ctx context.Context, accountId string, bankCode string, oldMpinEn string, newMpinEn string ) error 
+	SetMpin(ctx context.Context, accountId string, bankCode string, mpinEn string) error
+	ChangeMpin(ctx context.Context, accountId string, bankCode string, oldMpinEn string, newMpinEn string) error
 	GetBalance(ctx context.Context, accountId string, bankCode string, mpinEn string) (int64, error)
 }
 
@@ -24,8 +24,9 @@ type BankServiceClient struct {
 }
 
 func NewBankServiceClient(url string) HttpClient {
+	allowInsecureTLS := os.Getenv("ALLOW_INSECURE_TLS") == "true"
 	tlsConfig := &tls.Config{
-		InsecureSkipVerify: true, //must set to false in production
+		InsecureSkipVerify: allowInsecureTLS,
 	}
 
 	transport := &http.Transport{
@@ -48,7 +49,7 @@ func (c *BankServiceClient) DiscoverAccounts(ctx context.Context, phone string, 
 	})
 
 	url := fmt.Sprintf("%s/account/discover", c.BaseURL)
-	req, _ := http.NewRequestWithContext(ctx, "GET", url, bytes.NewBuffer(body))
+	req, _ := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-INTERNAL-API-KEY", os.Getenv("INTERNAL_API_KEY"))
 
@@ -67,11 +68,11 @@ func (c *BankServiceClient) DiscoverAccounts(ctx context.Context, phone string, 
 	return result, nil
 }
 
-func (c *BankServiceClient) SetMpin(ctx context.Context, accountId string, bankCode string, mpinEn string ) error {
+func (c *BankServiceClient) SetMpin(ctx context.Context, accountId string, bankCode string, mpinEn string) error {
 	body, _ := json.Marshal(map[string]interface{}{
-		"account_id":accountId,
-		"bank_code":bankCode,
-		"mpin_encrypted":mpinEn,
+		"account_id":     accountId,
+		"bank_code":      bankCode,
+		"mpin_encrypted": mpinEn,
 	})
 
 	url := fmt.Sprintf("%s/account/mpin", c.BaseURL)
@@ -79,19 +80,24 @@ func (c *BankServiceClient) SetMpin(ctx context.Context, accountId string, bankC
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-INTERNAL-API-KEY", os.Getenv("INTERNAL_API_KEY"))
 
-	_, err := c.HTTPClient.Do(req)
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
-	return nil 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("bank returned error :%d", resp.StatusCode)
+	}
+	return nil
 }
 
-func (c *BankServiceClient) ChangeMpin(ctx context.Context, accountId string, bankCode string, oldMpinEn string, newMpinEn string ) error {
+func (c *BankServiceClient) ChangeMpin(ctx context.Context, accountId string, bankCode string, oldMpinEn string, newMpinEn string) error {
 	body, _ := json.Marshal(map[string]interface{}{
-		"account_id":accountId,
-		"bank_code":bankCode,
-		"old_mpin_encrypted":oldMpinEn,
-		"new_mpin_encrypted":newMpinEn,
+		"account_id":         accountId,
+		"bank_code":          bankCode,
+		"old_mpin_encrypted": oldMpinEn,
+		"new_mpin_encrypted": newMpinEn,
 	})
 
 	url := fmt.Sprintf("%s/account/mpin", c.BaseURL)
@@ -99,28 +105,33 @@ func (c *BankServiceClient) ChangeMpin(ctx context.Context, accountId string, ba
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-INTERNAL-API-KEY", os.Getenv("INTERNAL_API_KEY"))
 
-	_, err := c.HTTPClient.Do(req)
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
-	return nil 
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("bank returned error :%d", resp.StatusCode)
+	}
+	return nil
 }
 
-func (c *BankServiceClient) GetBalance(ctx context.Context, accountId string, bankCode string, mpinEn string) (int64, error){
+func (c *BankServiceClient) GetBalance(ctx context.Context, accountId string, bankCode string, mpinEn string) (int64, error) {
 	body, _ := json.Marshal(map[string]interface{}{
-		"account_id":accountId,
-		"bank_code":bankCode,
-		"mpin_encrypted":mpinEn,
+		"account_id":     accountId,
+		"bank_code":      bankCode,
+		"mpin_encrypted": mpinEn,
 	})
 
 	url := fmt.Sprintf("%s/account/balance", c.BaseURL)
-	req, _ := http.NewRequestWithContext(ctx, "GET", url, bytes.NewBuffer(body))
+	req, _ := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-INTERNAL-API-KEY", os.Getenv("INTERNAL_API_KEY"))
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return 0,  err
+		return 0, err
 	}
 	defer resp.Body.Close()
 

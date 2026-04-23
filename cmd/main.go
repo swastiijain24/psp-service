@@ -44,7 +44,7 @@ func main() {
 	kafkaAddr := os.Getenv("KAFKA_ADDR")
 	port := os.Getenv("PORT")
 
-	redisStore := repository.NewRedisStore(redisAddr)
+	redisStore := redis.NewRedisStore(redisAddr)
 	kafkaProducer := kafka.NewProducer(kafkaAddr)
 
 	repo := repo.New(pool)
@@ -68,7 +68,7 @@ func main() {
 	routes.RegisterNpciRoutes(r, apiKeyAuth, paymentHandler)
 	bankServiceClient := httpclient.NewBankServiceClient(os.Getenv("BASE_URL"))
 	accountService := services.NewAccountService(bankServiceClient, vpaSvc)
-	accountHandler := handlers.NewaccountHandler(accountService)
+	accountHandler := handlers.NewAccountHandler(accountService)
 	vpaHandler := handlers.NewVpaHandler(vpaSvc)
 	routes.RegisterAccountRoutes(r,apiKeyAuth, accountHandler)
 	routes.RegisterVpaRoutes(r, apiKeyAuth, vpaHandler )

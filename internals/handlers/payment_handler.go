@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/swastiijain24/psp/internals/services"
@@ -33,8 +34,9 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-
+	
 	log.Print("handler function's job done 4")
+	c.JSON(202, http.StatusAccepted)
 }
 
 func (h *PaymentHandler) GetTxnStatus(c *gin.Context) {
@@ -43,6 +45,7 @@ func (h *PaymentHandler) GetTxnStatus(c *gin.Context) {
 	status, err := h.paymentService.GetTransactionStatus(c.Request.Context(), transactionId)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
+		return 
 	}
 	c.JSON(200, gin.H{"status": status})
 }

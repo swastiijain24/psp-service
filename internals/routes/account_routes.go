@@ -11,9 +11,9 @@ func RegisterAccountRoutes(r *gin.Engine, apiKeyAuth *apiAuth.APIMiddleware , ac
 	accountRoutes := r.Group("/account")
 	accountRoutes.Use(apiKeyAuth.ApiAuthentication())
 	{
-		accountRoutes.GET("/discover", accountHandler.DiscoverAccounts)
+		accountRoutes.POST("/discover", accountHandler.DiscoverAccounts)
 		accountRoutes.POST("/mpin", accountHandler.SetMpin)
 		accountRoutes.PUT("/mpin", accountHandler.ChangeMpin)
-		accountRoutes.GET("/balance", accountHandler.GetBalance)
+		accountRoutes.POST("/balance", accountHandler.GetBalance)
 	}
 }

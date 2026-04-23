@@ -13,6 +13,6 @@ func RegisterNpciRoutes(r *gin.Engine, apiKeyAuth *apiAuth.APIMiddleware , payme
 
 	{
 		npciRoutes.POST("/payment", paymentHandler.ProcessPayment)
-		npciRoutes.GET("status/:transactionId", paymentHandler.GetTxnStatus)
+		npciRoutes.GET("/status/:transactionId", paymentHandler.GetTxnStatus)
 	}
 }

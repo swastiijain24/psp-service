@@ -12,6 +12,6 @@ func RegisterVpaRoutes(r *gin.Engine,  apiKeyAuth *apiAuth.APIMiddleware ,vpaHan
 	vpaRoutes.Use(apiKeyAuth.ApiAuthentication())
 
 	{
-		vpaRoutes.POST("/register")
+		vpaRoutes.POST("/register", vpaHandler.RegisterVpa)
 	}
 }

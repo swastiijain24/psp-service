@@ -21,7 +21,7 @@ func (h *VpaHandler) RegisterVpa(c *gin.Context){
 		c.JSON(400, gin.H{"error": err})
 	}
 
-	err := h.vpaService.RegisterVpa(c.Request.Context(), vpaRegisterReq.VpaId, vpaRegisterReq.VpaId, vpaRegisterReq.BankCode)
+	err := h.vpaService.RegisterVpa(c.Request.Context(), vpaRegisterReq.VpaId, vpaRegisterReq.AccountId, vpaRegisterReq.BankCode)
 	c.JSON(200, gin.H{"error":err})
 }
 
