@@ -36,7 +36,7 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 	}
 	
 	log.Print("handler function's job done 4")
-	c.JSON(202, http.StatusAccepted)
+	c.JSON(200, http.StatusAccepted)
 }
 
 func (h *PaymentHandler) GetTxnStatus(c *gin.Context) {

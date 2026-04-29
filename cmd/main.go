@@ -74,6 +74,7 @@ func main() {
 	routes.RegisterVpaRoutes(r, apiKeyAuth, vpaHandler )
 	log.Print("initialized all")
 
+	
 
 	//since the .Run runs infinitley and if we press ctlr c the consumer goes into infinite loop and the main never ends giving infinite errors 
 	// log.Println("PSP API starting on :" + port)
